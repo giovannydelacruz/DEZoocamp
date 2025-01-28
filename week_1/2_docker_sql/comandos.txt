@@ -1,0 +1,32 @@
+Se ejecuta el siguiente comando con el fin de crear el contenedor a partir de la imagen postgres:
+
+docker run -it \
+    -e POSTGRES_USER="root" \
+    -e POSTGRES_PASSWORD="root" \
+    -e POSTGRES_DB="ny_taxi" \
+    -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data \
+    -p 5433:5432 \
+    --name postgres_zoocamp \
+    postgres:14
+
+________________________________________________________________________________________
+
+Se abre otro terminal y se debe de instalar pgcli para poder ejecutar postgres desde la terminal:
+
+pip install pgcli
+
+Ahora para poder abrir postgres desde la terminal podemos ejecutar la siguiente instrucción:
+
+pgcli -h localhost -p 5433 -u root -d ny_taxi
+
+si te pide la contraseña deberia ser en este caso "root" porque fue la que pusimos en la configuración.
+
+___________________________________________________________________________________________
+
+En otra terminal nos descargamos los datos csv:
+
+wget https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz
+
+y se extrae:
+
+gunzip -d yellow_tripdata_2021-01.csv.gz

@@ -1,0 +1,42 @@
+select		case when trip_distance <= 1 then 'Up to 1 mile'
+			when trip_distance >1 and trip_distance <=3 then 'Bet 1 and 3 miles'
+			when trip_distance >3 and trip_distance <=7 then 'Bet 3 and 7 miles'
+			when trip_distance >7 and trip_distance <=10 then 'Bet 7 and 10 miles'
+			else 'Over 10 miles' end as miles,
+			count(1) as cantidad
+from green_taxi_trips gtt 
+where lpep_pickup_datetime >= ('2019-10-01') and  lpep_dropoff_datetime <('2019-11-01')
+group by miles;
+
+-----------------------------------------------------------------------------
+
+select to_char(gtt.lpep_pickup_datetime, 'YYYY-MM-DD') as day, max(trip_distance) as max_distance
+from green_taxi_trips gtt
+group by day
+order by max_distance desc
+
+-----------------------------------------------------------------------------
+
+select tzd."Zone", sum(gtt.total_amount) as total_amount_by_zone 
+from green_taxi_trips gtt 
+inner join taxi_zone_data tzd on tzd."LocationID" = gtt."PULocationID" 
+where to_char(gtt.lpep_pickup_datetime, 'YYYY-MM-DD')  = '2019-10-18'
+group by 1
+order by 2 desc
+
+-----------------------------------------------------------------------------
+
+with taxi_trips as (
+select gtt.*, tzd."Zone" as Zone_pickup
+from green_taxi_trips gtt 
+inner join taxi_zone_data tzd on tzd."LocationID" = gtt."PULocationID"
+where tzd."Zone" = 'East Harlem North'
+and lpep_pickup_datetime >= ('2019-10-01') and  lpep_pickup_datetime <('2019-11-01')
+)
+select tzd."Zone" as Zone_dropoff, max(tt.tip_amount)
+from taxi_trips tt
+inner join taxi_zone_data tzd on tzd."LocationID" = tt."DOLocationID"
+group by 1
+order by 2 desc
+limit 1
+-----------------------------------------------------
